@@ -16,6 +16,7 @@ import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     private val scope = CoroutineScope(Dispatchers.IO)
+    private lateinit var job: Job
     val animator = TranslateAnimation(0f, 1200f,
         0f, -1200f)
     var rand1: Long = 0
@@ -25,7 +26,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var cvadr: LinearLayout
     lateinit var cLayout: ConstraintLayout
     lateinit var button2: Button
-    lateinit var btnZapCvadr: Button
+
+
     lateinit var btnSbrosCvadr: Button
     lateinit var imageView: ImageView
     lateinit var imageView2: ImageView
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         buttonStart = findViewById(R.id.buttonStart)
         button2 = findViewById(R.id.button2)
-        btnZapCvadr = findViewById(R.id.btnZapCvadr)
+
         btnSbrosCvadr = findViewById(R.id.btnSbrosCvadr)
 
         imageView = findViewById(R.id.imageView)
@@ -97,64 +99,100 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        btnZapCvadr.setOnClickListener {
-
-            val animator =
-                ValueAnimator.ofFloat(0f, cLayout.x + cLayout.width - cvadr.x - cvadr.width).apply {
-                    duration = 5000
-                    addUpdateListener { animation ->
-                        cvadr.translationX = animation.animatedValue as Float
-                        cvadr.translationY = -((animation.animatedValue) as Float)
-                        if (cvadr.x == 1017.0f) {
-                            Toast.makeText(this@MainActivity, "Приехали", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                    start()
-                }
-        }
+        var bul = true
         var valueX = 0f
         var valueY = 0f
         cvadr.setOnClickListener {
-            scope.launch {
-                while (cvadr.x < 1017.0f) {
-                    delay(50)
-                    valueX = valueX + 10f
-                    valueY = valueY + 10f
-                    withContext(Dispatchers.Main) {
-                        cvadr.translationX = valueX
-                        cvadr.translationY = -valueY
+            bul=true
+            job = scope.launch {
+                while (bul) {
+                    if (cvadr.x<cLayout.width-cvadr.width){
+                    while (cvadr.x < cLayout.width - cvadr.width) {
+                        delay(50)
+                        valueX = valueX + 10f
+                        valueY = valueY + 10f
+                        withContext(Dispatchers.Main) {
+                            cvadr.translationX = valueX
+                            cvadr.translationY = -valueY
+                        }
                     }
-                }
-                while (cvadr.y > 0f) {
-                    delay(50)
-                    valueX = valueX - 10f
-                    valueY = valueY + 10f
-                    withContext(Dispatchers.Main) {
-                        cvadr.translationX = valueX
-                        cvadr.translationY = -valueY
+                    }else{
+                        while (cvadr.x > 0&&cvadr.y<cLayout.height-cvadr.height) {
+                            delay(50)
+                            valueX = valueX - 10f
+                            valueY = valueY + 10f
+                            withContext(Dispatchers.Main) {
+                                cvadr.translationX = valueX
+                                cvadr.translationY = -valueY
+                            }
+                        }
                     }
-                }
-                while (cvadr.x > 0f) {
-                    delay(50)
-                    valueX = valueX - 10f
-                    valueY = valueY - 10f
-                    withContext(Dispatchers.Main) {
-                        cvadr.translationX = valueX
-                        cvadr.translationY = -valueY
-                    }
-                }
 
+                    while (cvadr.y > 0f && cvadr.x > 0) {
+                        delay(50)
+                        valueX = valueX - 10f
+                        valueY = valueY + 10f
+                        withContext(Dispatchers.Main) {
+                            cvadr.translationX = valueX
+                            cvadr.translationY = -valueY
+                        }
+                    }
+                    if (cvadr.x > 0f) {
+                        while (cvadr.x > 0f) {
+                            delay(50)
+                            valueX = valueX - 10f
+                            valueY = valueY - 10f
+                            withContext(Dispatchers.Main) {
+                                cvadr.translationX = valueX
+                                cvadr.translationY = -valueY
+                            }
+                        }
+                    } else {
+                        while (cvadr.y > 0f && cvadr.x < cLayout.width) {
+                            delay(50)
+                            valueX = valueX + 10f
+                            valueY = valueY + 10f
+                            withContext(Dispatchers.Main) {
+                                cvadr.translationX = valueX
+                                cvadr.translationY = -valueY
+                            }
+                        }
+                    }
+                    while (cvadr.y < cLayout.height - cvadr.height && cvadr.x < cLayout.width - cvadr.height) {
+                        delay(50)
+                        valueX = valueX + 10f
+                        valueY = valueY - 15f
+                        withContext(Dispatchers.Main) {
+                            cvadr.translationX = valueX
+                            cvadr.translationY = -valueY
+                        }
+
+                    }
+
+                }
             }
+
+
+        }
+        btnSbrosCvadr.setOnClickListener {
+            job.cancel()
+            bul=false
+            cvadr.translationX = 0f
+            cvadr.translationY = 0f
+            valueX=0f
+            valueY=0f
         }
 
+
     }
-        class Run {
-            companion object {
-                fun after(delay: Long, process: () -> Unit) {
-                    Handler().postDelayed({
-                        process()
-                    }, delay)
-                }
+
+    class Run {
+        companion object {
+            fun after(delay: Long, process: () -> Unit) {
+                Handler().postDelayed({
+                    process()
+                }, delay)
             }
         }
     }
+}
