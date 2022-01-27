@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     }else{
-                        while (cvadr.x > 0&&cvadr.y<cLayout.height-cvadr.height) {
+                        while (cvadr.x > 0&&cvadr.y>cLayout.height-cvadr.height) {
                             delay(50)
                             valueX = valueX - 10f
                             valueY = valueY + 10f
