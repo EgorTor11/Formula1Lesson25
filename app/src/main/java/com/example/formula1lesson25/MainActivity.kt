@@ -10,6 +10,7 @@ import android.widget.Toast
 import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
+
     private val scope = CoroutineScope(Dispatchers.IO)
     private lateinit var job: Job
     val animator = TranslateAnimation(0f, 1200f,
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
                 if (rand1 < rand2 && rand1 < rand3) {
                     Run.after(rand1) {
-                        if (!sbrosBool ) {
+                        if (!sbrosBool) {
                             Toast.makeText(this,
                                 "Победил первый Самолет, для формулы1 - это чудо, я считаю",
                                 Toast.LENGTH_LONG).show()
@@ -71,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 } else if (rand1 > rand2 && rand2 < rand3) {
                     Run.after(rand2) {
-                        if (!sbrosBool ) {
+                        if (!sbrosBool) {
                             Toast.makeText(this,
                                 "Победил второй Самолет, для формулы1 - это чудо, я считаю",
                                 Toast.LENGTH_LONG).show()
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 } else if (rand1 > rand3 && rand2 > rand3) {
                     Run.after(rand3) {
-                        if (!sbrosBool ) {
+                        if (!sbrosBool) {
                             Toast.makeText(this,
                                 "Победил третий Самолет, для формулы1 - это чудо, я считаю",
                                 Toast.LENGTH_LONG).show()
@@ -87,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 } else if (rand1 == rand3 || rand1 == rand2 || rand2 == rand3) {
                     Run.after(rand3) {
-                        if (!sbrosBool ) {
+                        if (!sbrosBool) {
                             Toast.makeText(this,
                                 "Не вероятно, кто-то пришел ноздря в ноздрю!!! - это чудо, я считаю, но нужно повторить старт!",
                                 Toast.LENGTH_LONG).show()
@@ -95,9 +96,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            startBool=false
+            startBool = false
         }
         buttonSbros.setOnClickListener {
+            Run.handler.removeCallbacksAndMessages(null)
             sbrosBool = true
             startBool = true
             imageView.clearAnimation()
@@ -110,9 +112,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     class Run {
+
         companion object {
+            var handler=Handler()
+
+
             fun after(delay: Long, process: () -> Unit) {
-                Handler().postDelayed({
+               handler.postDelayed({
                     process()
                 }, delay)
             }
